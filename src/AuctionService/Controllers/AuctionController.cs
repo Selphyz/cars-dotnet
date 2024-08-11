@@ -46,13 +46,15 @@ public class AuctionController : ControllerBase {
     [HttpPost]
     public async Task<ActionResult<AuctionDto>> CreateAuction(CreateAuctionDto auctionDto) {
         var auction = _mapper.Map<Auction>(auctionDto);
+        // TODO: add current user as seller
         auction.Seller = "test";
         _ctx.Auctions.Add(auction);
-        var result = await _ctx.SaveChangesAsync() > 0;
         var newAuction = _mapper.Map<AuctionDto>(auction);
         await _publishEndpoint.Publish(_mapper.Map<AuctionCreated>(newAuction));
-        if (!result) return BadRequest("Could not save to DB");
-        return CreatedAtAction(nameof(GetAuctionById), new { auction.Id }, newAuction);
+        var result = await _ctx.SaveChangesAsync() > 0;
+        if (!result) return BadRequest("Could not save changes to the DB");
+        return CreatedAtAction(nameof(GetAuctionById),
+            new { auction.Id }, newAuction);
     }
 
     [HttpPut("{id}")]
