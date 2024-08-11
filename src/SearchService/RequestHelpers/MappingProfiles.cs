@@ -7,5 +7,6 @@ namespace SearchService.RequestHelpers;
 public class MappingProfiles : Profile {
     protected MappingProfiles() {
         CreateMap<AuctionCreated, Item>();
+        CreateMap<AuctionUpdated, Item>();
     }
 }
